@@ -1,0 +1,101 @@
+.WhoRead {
+    .WhoRead-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .WhoRead-item {
+        display: inline-block;
+        vertical-align: top;
+        padding: 0 2px;
+    }
+
+    a {
+        color: #111;
+        font-weight: bold;
+    }
+
+    .Avatar {
+        .Avatar--size(24px);
+    }
+
+    .WhoRead-avatar--outdated .Avatar {
+        filter: grayscale(100%);
+    }
+
+    h3 {
+        margin: 0;
+
+        +.WhoRead-list {
+            margin-top: 15px;
+        }
+    }
+    
+    .WhoRead-toggle {
+        float: right;
+        cursor: pointer;
+
+        // Also show the title as clickable when the area is toggleable
+        + h3 {
+            cursor: pointer;
+        }
+    }
+
+    .WhoRead-more {
+        background: #aaa;
+        cursor: pointer;
+    }
+}
+
+.WhoRead--extended {
+    background: #f0f0f0;
+    border-radius: @border-radius;
+    padding: 10px 20px;
+    margin: 10px 0;
+
+    .WhoRead-item {
+        width: 80px;
+    }
+
+    .Avatar {
+        .Avatar--size(64px);
+    }
+
+    .WhoRead-avatar {
+        position: relative;
+        width: 64px;
+        margin: 0 auto;
+    }
+
+    .badges {
+        position: absolute;
+        top: -3px;
+        left: 0;
+        right: 0;
+        text-align: right;
+        white-space: nowrap;
+        margin: 0; // Cancel rules in .DiscussionHero
+
+        .Badge {
+            margin-left: -10px;
+        }
+    }
+
+    .UserOnline {
+        margin-right: 5px;
+
+        .icon {
+            font-size: 12px;
+        }
+
+        .fa-circle {
+            color: @online-user-circle-color;
+        }
+    }
+
+    .WhoRead-user {
+        text-align: center;
+        text-overflow: ellipsis;
+    }
+}
