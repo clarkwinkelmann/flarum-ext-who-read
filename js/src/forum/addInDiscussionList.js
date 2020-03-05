@@ -24,7 +24,7 @@ export default function () {
             items.add('who-read', Readers.component({
                 readers,
                 discussion: this.props.discussion,
-            }), -10);
+            }), -120);
         }
     });
 }
