@@ -8,6 +8,7 @@ import listItems from 'flarum/helpers/listItems';
 import icon from 'flarum/helpers/icon';
 import extractText from 'flarum/utils/extractText';
 import humanTime from 'flarum/utils/humanTime';
+import UnreadButton from './UnreadButton';
 
 /* global m, $, flarum */
 
@@ -20,6 +21,11 @@ export default class Readers extends Component {
         const items = [];
 
         const readersWithoutThoseVeryBehind = this.props.readers.filter(reader => {
+            // The last post number might be null if the user marked as unread. In this case we hide them
+            if (reader.last_read_post_number() === null) {
+                return false;
+            }
+
             if (!this.props.discussion) {
                 return true;
             }
@@ -83,7 +89,15 @@ export default class Readers extends Component {
                 }
             }
 
-            const outdated = this.props.discussion && reader.last_read_post_number() < this.props.discussion.lastPostNumber();
+            if (reader.unread()) {
+                badges.add('who-read-unread', Badge.component({
+                    type: 'who-read-unread',
+                    icon: 'fas fa-eye-slash',
+                    label: app.translator.trans('clarkwinkelmann-who-read.forum.badges.unread'),
+                }));
+            }
+
+            const outdated = reader.unread() || (this.props.discussion && reader.last_read_post_number() < this.props.discussion.lastPostNumber());
 
             let toolTipTranslationKey = 'last_read_at';
 
@@ -129,6 +143,10 @@ export default class Readers extends Component {
                 },
             }, this.props.title) : null,
             !this.props.toggleable || this.visible ? m('ul.WhoRead-list', items.map(item => m('li.WhoRead-item', item))) : null,
+            this.props.unreadControlDiscussion && this.props.unreadControlDiscussion.attribute('whoReadCanMarkUnread') ? UnreadButton.component({
+                className: 'Button',
+                discussion: this.props.unreadControlDiscussion,
+            }) : null,
         ]);
     }
 }

@@ -27,11 +27,11 @@
     h3 {
         margin: 0;
 
-        +.WhoRead-list {
+        + .WhoRead-list {
             margin-top: 15px;
         }
     }
-    
+
     .WhoRead-toggle {
         float: right;
         cursor: pointer;
@@ -97,5 +97,12 @@
     .WhoRead-user {
         text-align: center;
         text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
+}
+
+.Badge--who-read-unread {
+    background: #ffea7b;
+    color: #de8e00;
 }

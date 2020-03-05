@@ -25,10 +25,22 @@ class UserStateSerializer extends AbstractSerializer
      */
     protected function getDefaultAttributes($model)
     {
+        $canSeeUnread = $this->actor->hasPermission('who-read.seeUnread');
+
+        if (!$canSeeUnread && $model->who_read_unread) {
+            return [
+                'last_read_at' => null,
+                'last_read_post_number' => null,
+                'subscription' => null,
+                'unread' => null,
+            ];
+        }
+
         return [
             'last_read_at' => $this->formatDate($model->last_read_at),
             'last_read_post_number' => $model->last_read_post_number,
             'subscription' => $this->actor->hasPermission('who-read.seeSubscription') ? $model->subscription : null,
+            'unread' => $canSeeUnread ? $model->who_read_unread : null,
         ];
     }
 

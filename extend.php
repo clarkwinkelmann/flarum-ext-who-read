@@ -16,4 +16,5 @@ return [
 
     new Extenders\DiscussionAttributes(),
     new Extenders\ForumAttributes(),
+    new Extenders\SaveDiscussionUnread(),
 ];

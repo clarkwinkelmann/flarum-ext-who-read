@@ -2,14 +2,36 @@ import {extend} from 'flarum/extend';
 import app from 'flarum/app';
 import DiscussionPage from 'flarum/components/DiscussionPage';
 import Discussion from 'flarum/models/Discussion';
+import Badge from 'flarum/components/Badge';
+import Model from 'flarum/Model';
 import UserState from './models/UserState';
 import addInDiscussionHero from './addInDiscussionHero';
 import addInDiscussionList from './addInDiscussionList';
 import addInPostStream from './addInPostStream';
+import addUnreadControls from './addUnreadControls';
 
 app.initializers.add('clarkwinkelmann-who-read', () => {
     app.store.models['clarkwinkelmann-who-readers'] = UserState;
     Discussion.prototype.clarkwinkelmannWhoReaders = Discussion.hasMany('clarkwinkelmannWhoReaders');
+
+    extend(Discussion.prototype, 'badges', function (items) {
+        if (this.attribute('whoReadUnread')) {
+            items.add('who-read-unread', Badge.component({
+                type: 'who-read-unread',
+                icon: 'fas fa-eye-slash',
+                label: app.translator.trans('clarkwinkelmann-who-read.forum.badges.unread'),
+            }));
+        }
+    });
+
+    // When Flarum sets the last read post in DiscussionPage.positionChanged, we want to trigger a redraw after the request finishes
+    extend(Model.prototype, 'save', function (promise, attributes) {
+        if (attributes.lastReadPostNumber) {
+            promise.then(() => {
+                m.redraw();
+            });
+        }
+    });
 
     // Doing this here because it's used by both DiscussionHero and PostStream
     extend(DiscussionPage.prototype, 'params', function (params) {
@@ -23,4 +45,5 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
     addInDiscussionHero();
     addInDiscussionList();
     addInPostStream();
+    addUnreadControls();
 });

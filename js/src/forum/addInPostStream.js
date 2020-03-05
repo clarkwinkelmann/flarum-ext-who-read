@@ -57,13 +57,16 @@ export default function () {
                 // Best to make a clean filtering anyway to prevent any issue with pagination as well
                 const readersWhoReadEverything = this.discussion.clarkwinkelmannWhoReaders().filter(reader => reader.last_read_post_number() >= this.discussion.lastPostNumber());
 
-                item.children.unshift(Readers.component({
-                    readers: readersWhoReadEverything,
-                    extended: true,
-                    title: app.translator.trans(translationPrefix + 'stats.to_end', {
-                        count: readersWhoReadEverything.length,
-                    }),
-                }));
+                if (readersWhoReadEverything.length > 0) {
+                    item.children.unshift(Readers.component({
+                        readers: readersWhoReadEverything,
+                        extended: true,
+                        title: app.translator.trans(translationPrefix + 'stats.to_end', {
+                            count: readersWhoReadEverything.length,
+                        }),
+                        unreadControlDiscussion: this.discussion,
+                    }));
+                }
             }
         });
     });
