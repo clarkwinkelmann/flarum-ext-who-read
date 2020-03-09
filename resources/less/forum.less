@@ -1,75 +1,21 @@
-.WhoRead {
-    .DiscussionListItem-info & {
-        padding-top: 5px;
-    }
-
-    .WhoRead-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .WhoRead-item {
-        display: inline-block;
-        vertical-align: top;
-        padding: 0 2px;
-    }
-
-    a {
-        color: #111;
-        font-weight: bold;
-    }
-
-    .Avatar {
-        .Avatar--size(24px);
-    }
-
-    .WhoRead-avatar--outdated .Avatar {
-        filter: grayscale(100%);
-    }
-
-    h3 {
-        margin: 0;
-
-        + .WhoRead-list {
-            margin-top: 15px;
-        }
-    }
-
-    .WhoRead-toggle {
-        float: right;
-        cursor: pointer;
-
-        // Also show the title as clickable when the area is toggleable
-        + h3 {
-            cursor: pointer;
-        }
-    }
-
-    .WhoRead-more {
-        background: #aaa;
-        cursor: pointer;
-    }
+.WhoRead-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-.WhoRead--extended {
-    background: #f0f0f0;
-    border-radius: @border-radius;
-    padding: 10px 20px;
-    margin: 10px 0;
+.WhoRead-item {
+    display: inline-block;
+    vertical-align: top;
+    padding: 0 2px;
 
-    .WhoRead-item {
-        width: 80px;
-    }
-
-    .Avatar {
-        .Avatar--size(64px);
+    a {
+        color: @text-color;
+        font-weight: bold;
     }
 
     .WhoRead-avatar {
         position: relative;
-        width: 64px;
-        margin: 0 auto;
     }
 
     .badges {
@@ -84,6 +30,50 @@
         .Badge {
             margin-left: -10px;
         }
+    }
+
+    // Remove max width limitation, just like Flarum removes it inside of the DiscussionListItem
+    // This is particularly needed for the tooltips inside of the DiscussionHero
+    .tooltip .tooltip-inner {
+        max-width: none;
+    }
+}
+
+.WhoRead-summary {
+    .Avatar {
+        .Avatar--size(24px);
+    }
+
+    .WhoRead-avatar--outdated .Avatar {
+        filter: grayscale(100%);
+    }
+
+    .WhoRead-more {
+        background: #aaa;
+        cursor: pointer;
+    }
+
+    .Badge {
+        .Badge--size(16px);
+    }
+
+    .badges {
+        top: -6px;
+    }
+}
+
+.WhoRead-details {
+    .WhoRead-item {
+        width: 80px;
+    }
+
+    .Avatar {
+        .Avatar--size(64px);
+    }
+
+    .WhoRead-avatar {
+        width: 64px;
+        margin: 0 auto;
     }
 
     .UserOnline {
@@ -103,10 +93,49 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+        margin-bottom: 10px;
     }
 }
 
 .Badge--who-read-unread {
     background: #ffea7b;
     color: #de8e00;
+}
+
+.Post-footer {
+    .CommentPost & {
+        // Force the post footer be the same height as the post actions
+        margin-top: -5px;
+        margin-bottom: 0;
+    }
+
+    .item-who-read,
+    .item-who-read-unread {
+        margin-bottom: 0;
+        display: inline-block;
+    }
+
+    .item-who-read {
+        // Force our footer content to be the same height as post actions
+        // Add negative margins so we can fit larger icons and still stay with a button 36px high
+        .WhoRead-list {
+            margin-top: -4px;
+            margin-bottom: -4px;
+        }
+
+        a .icon {
+            // Cancel weird rules to hide icons in footer
+            // This hides the icon from the badges
+            display: inline-block;
+        }
+
+        .icon {
+            // Cancel padding that doesn't play nice with badges
+            margin: 0;
+        }
+
+        .WhoRead-summary {
+            display: inline-block;
+        }
+    }
 }

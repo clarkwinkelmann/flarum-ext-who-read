@@ -1,70 +1,113 @@
 import {extend} from 'flarum/extend';
 import app from 'flarum/app';
-import PostStream from 'flarum/components/PostStream';
-import Readers from './components/Readers';
+import Button from 'flarum/components/Button';
+import CommentPost from 'flarum/components/CommentPost';
+import Post from 'flarum/components/Post';
+import icon from 'flarum/helpers/icon';
+import extractText from 'flarum/utils/extractText';
+import AvatarSummary from './components/AvatarSummary';
+import ReadersModal from './components/ReadersModal';
+import UnreadButton from './components/UnreadButton';
 
-const translationPrefix = 'clarkwinkelmann-who-read.forum.';
+const translationPrefix = 'clarkwinkelmann-who-read.forum.footer.';
 
 export default function () {
-    extend(PostStream.prototype, 'view', function (vnode) {
-        let readers = this.discussion.clarkwinkelmannWhoReaders();
+    extend(Post.prototype, 'init', function () {
+        this.subtree.check(
+            // Refresh if the user toggles between read and unread
+            () => this.props.post.discussion().attribute('whoReadUnread'),
+            // Make the post redraws when the last read post number changes,
+            // so that scrolling through the discussion reflects your own read status
+            () => this.props.post.discussion().lastReadPostNumber()
+        );
+    });
 
-        // If there are no readers or if we can't see them, skip
-        if (!readers) {
-            return;
-        }
+    // For some reason extending Post is not enough to work for CommentPost. So we also add it to CommentPost
+    [Post, CommentPost].forEach(Component => {
+        extend(Component.prototype, 'footerItems', function (items) {
+            const discussion = this.props.post.discussion();
 
-        vnode.children.forEach(item => {
-            if (app.forum.attribute('who-read.showBetweenPosts') && item.attrs && item.attrs['data-id']) {
-                const post = app.store.getById('posts', item.attrs['data-id']);
-
-                // Separate the readers into two arrays.
-                // Those who read this post stay in the original array, they will be shown below.
-                // Those who did not read go in the new array, they will be shown above the post.
-                const readersWhoDidntReadThisPost = [];
-                readers = readers.filter(reader => {
-                    const hasReadThePost = reader.last_read_post_number() >= post.number();
-
-                    if (!hasReadThePost) {
-                        readersWhoDidntReadThisPost.push(reader);
-                    }
-
-                    return hasReadThePost;
-                });
-
-                // If this is the first post of the visible section, we won't show read status
-                // If we showed it, it would show everyone who didn't read up to here together, even if they stopped reading many pages away
-                // The check is done after we extract readers, that way those readers of previous pages are removed and won't show up
-                if (this.discussion.postIds()[this.visibleStart] === item.attrs['data-id']) {
-                    return;
-                }
-
-                if (readersWhoDidntReadThisPost.length) {
-                    item.children.unshift(Readers.component({
-                        readers: readersWhoDidntReadThisPost,
-                        extended: true,
-                        title: app.translator.trans(translationPrefix + 'stats.to_at_least_here', {
-                            count: readersWhoDidntReadThisPost.length + readers.length,
-                        }),
-                        toggleable: true,
-                    }));
-                }
+            // If the post is loaded on a user profile, we don't have access to the list
+            // of post IDs in that discussion. If that's the case, skip
+            // We can't just check the output of discussion.postIds() because on the
+            //  profile page it throws an exception because relationships is undefined
+            if (!discussion.data.relationships || !discussion.data.relationships.posts) {
+                return;
             }
 
-            // Insert remaining readers above the reply box
-            if (item.attrs && item.attrs.key === 'reply') {
-                // We don't re-use the readers array because it won't be filtered if between-post is disabled
-                // Best to make a clean filtering anyway to prevent any issue with pagination as well
-                const readersWhoReadEverything = this.discussion.clarkwinkelmannWhoReaders().filter(reader => reader.last_read_post_number() >= this.discussion.lastPostNumber());
+            const postIds = discussion.postIds();
+            const currentPostIndex = postIds.indexOf(this.props.post.id());
 
-                if (readersWhoReadEverything.length > 0) {
-                    item.children.unshift(Readers.component({
-                        readers: readersWhoReadEverything,
-                        extended: true,
-                        title: app.translator.trans(translationPrefix + 'stats.to_end', {
-                            count: readersWhoReadEverything.length,
+            if (currentPostIndex !== -1 && currentPostIndex + 1 < postIds.length) {
+                const nextPostId = postIds[currentPostIndex + 1];
+                const nextPost = app.store.getById('posts', nextPostId);
+
+                if (nextPost) {
+                    const readersUntilHereOnly = discussion.clarkwinkelmannWhoReaders().filter(
+                        reader => reader.last_read_post_number() >= this.props.post.number() && reader.last_read_post_number() < nextPost.number()
+                    );
+
+                    const readersFurther = discussion.clarkwinkelmannWhoReaders().filter(
+                        reader => reader.last_read_post_number() >= nextPost.number()
+                    );
+
+                    items.add('who-read', Button.component({
+                        className: 'Button Button--link',
+                        onclick: event => {
+                            event.preventDefault();
+
+                            app.modal.show(new ReadersModal({
+                                readersUntilHereOnly,
+                                readersFurther,
+                            }));
+                        },
+                        title: extractText(app.translator.trans(translationPrefix + 'to-here-' + (readersUntilHereOnly.length ? 'some-stopped' : (readersFurther.length ? 'none-stopped' : 'nobody')), {
+                            total: readersUntilHereOnly.length + readersFurther.length,
+                            stopped: readersUntilHereOnly.length,
+                        })),
+                    }, [
+                        (readersUntilHereOnly.length + readersFurther.length),
+                        ' ',
+                        icon('fas fa-check-double'),
+                        ' ',
+                        AvatarSummary.component({
+                            readers: readersUntilHereOnly,
                         }),
-                        unreadControlDiscussion: this.discussion,
+                    ]));
+                }
+            } else if (currentPostIndex === postIds.length - 1) {
+                // If this is the last post
+
+                const readersEnd = discussion.clarkwinkelmannWhoReaders().filter(
+                    reader => reader.last_read_post_number() >= discussion.lastPostNumber()
+                );
+
+                items.add('who-read', Button.component({
+                    className: 'Button Button--link',
+                    onclick: event => {
+                        event.preventDefault();
+
+                        app.modal.show(new ReadersModal({
+                            readersEnd,
+                        }));
+                    },
+                    title: extractText(app.translator.trans(translationPrefix + 'to-end' + (readersEnd.length ? '' : '-nobody'), {
+                        total: readersEnd.length,
+                    })),
+                }, [
+                    readersEnd.length,
+                    ' ',
+                    icon('fas fa-check-double'),
+                    ' ',
+                    AvatarSummary.component({
+                        readers: readersEnd,
+                    }),
+                ]));
+
+                if (discussion.attribute('whoReadCanMarkUnread')) {
+                    items.add('who-read-unread', UnreadButton.component({
+                        className: 'Button',
+                        discussion,
                     }));
                 }
             }

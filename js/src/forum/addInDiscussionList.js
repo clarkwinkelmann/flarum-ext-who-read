@@ -2,7 +2,8 @@ import {extend} from 'flarum/extend';
 import app from 'flarum/app';
 import DiscussionList from 'flarum/components/DiscussionList';
 import DiscussionListItem from 'flarum/components/DiscussionListItem';
-import Readers from './components/Readers';
+import AvatarSummary from './components/AvatarSummary';
+import filterVeryBehind from './utils/filterVeryBehind';
 
 export default function () {
     extend(DiscussionList.prototype, 'requestParams', function (params) {
@@ -18,10 +19,16 @@ export default function () {
             return;
         }
 
-        const readers = this.props.discussion.clarkwinkelmannWhoReaders();
+        let readers = this.props.discussion.clarkwinkelmannWhoReaders();
 
-        if (readers && readers.length) {
-            items.add('who-read', Readers.component({
+        if (!readers) {
+            return;
+        }
+
+        readers = filterVeryBehind(readers, this.props.discussion);
+
+        if (readers.length) {
+            items.add('who-read', AvatarSummary.component({
                 readers,
                 discussion: this.props.discussion,
             }), -120);
