@@ -13,6 +13,10 @@ const translationPrefix = 'clarkwinkelmann-who-read.forum.footer.';
 
 export default function () {
     extend(Post.prototype, 'init', function () {
+        if (!app.forum.attribute('who-read.showBetweenPosts')) {
+            return;
+        }
+
         this.subtree.check(
             // Refresh if the user toggles between read and unread
             () => this.props.post.discussion().attribute('whoReadUnread'),
@@ -25,6 +29,10 @@ export default function () {
     // For some reason extending Post is not enough to work for CommentPost. So we also add it to CommentPost
     [Post, CommentPost].forEach(Component => {
         extend(Component.prototype, 'footerItems', function (items) {
+            if (!app.forum.attribute('who-read.showBetweenPosts')) {
+                return;
+            }
+
             const discussion = this.props.post.discussion();
 
             // If the post is loaded on a user profile, we don't have access to the list
@@ -66,7 +74,7 @@ export default function () {
                             stopped: readersUntilHereOnly.length,
                         })),
                     }, [
-                        (readersUntilHereOnly.length + readersFurther.length),
+                        app.forum.attribute('who-read.showCountOfReadersWhoStopped') ? readersUntilHereOnly.length : (readersUntilHereOnly.length + readersFurther.length),
                         ' ',
                         icon('fas fa-check-double'),
                         ' ',

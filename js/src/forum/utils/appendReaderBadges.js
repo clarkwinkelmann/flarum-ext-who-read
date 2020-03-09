@@ -26,7 +26,7 @@ export default function (badges, reader) {
     if (reader.unread()) {
         badges.add('who-read-unread', Badge.component({
             type: 'who-read-unread',
-            icon: 'fas fa-eye-slash',
+            icon: app.forum.attribute('who-read.unreadIcon'),
             label: app.translator.trans('clarkwinkelmann-who-read.forum.badges.unread'),
         }));
     }

@@ -45,6 +45,15 @@ export default class WhoReadSettingsModal extends SettingsModal {
                 }),
             ]),
             m('.Form-group', [
+                Switch.component({
+                    state: this.setting(settingsPrefix + 'showCountOfReadersWhoStopped')() === '1',
+                    onchange: value => {
+                        this.setting(settingsPrefix + 'showCountOfReadersWhoStopped')(value ? '1' : '0');
+                    },
+                    children: app.translator.trans(translationPrefix + 'show-count-of-readers-who-stopped'),
+                }),
+            ]),
+            m('.Form-group', [
                 m('label', app.translator.trans(translationPrefix + 'hide-when-behind')),
                 m('input.FormControl', {
                     type: 'number',
@@ -58,6 +67,14 @@ export default class WhoReadSettingsModal extends SettingsModal {
                     type: 'number',
                     bidi: this.setting(settingsPrefix + 'maxVisible', 10),
                     min: 0,
+                }),
+            ]),
+            m('.Form-group', [
+                m('label', app.translator.trans(translationPrefix + 'unread-icon')),
+                m('input.FormControl', {
+                    type: 'text',
+                    bidi: this.setting(settingsPrefix + 'unreadIcon'),
+                    placeholder: 'fas fa-eye-dash',
                 }),
             ]),
             m('.Form-group', [

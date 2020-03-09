@@ -12,7 +12,7 @@ export default class UnreadButton extends Component {
 
         return Button.component({
             className,
-            icon: 'fas fa-eye-slash',
+            icon: app.forum.attribute('who-read.unreadIcon'),
             children: app.translator.trans('clarkwinkelmann-who-read.forum.controls.' + (unread ? 'remove' : 'set') + '-unread'),
             onclick() {
                 discussion.save({
