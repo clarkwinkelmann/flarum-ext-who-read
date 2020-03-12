@@ -59,6 +59,18 @@ export default function () {
                         reader => reader.last_read_post_number() >= nextPost.number()
                     );
 
+                    const totalReadersWhoHaveSeenThisPost = readersUntilHereOnly.length + readersFurther.length;
+
+                    let title = extractText(app.translator.transChoice(translationPrefix + 'read-this-post', totalReadersWhoHaveSeenThisPost, {
+                        count: totalReadersWhoHaveSeenThisPost,
+                    }));
+
+                    if (totalReadersWhoHaveSeenThisPost > 0) {
+                        title += '. ' + extractText(app.translator.transChoice(translationPrefix + 'read-no-further', readersUntilHereOnly.length, {
+                            count: readersUntilHereOnly.length,
+                        }));
+                    }
+
                     items.add('who-read', Button.component({
                         className: 'Button Button--link',
                         onclick: event => {
@@ -69,12 +81,9 @@ export default function () {
                                 readersFurther,
                             }));
                         },
-                        title: extractText(app.translator.trans(translationPrefix + 'to-here-' + (readersUntilHereOnly.length ? 'some-stopped' : (readersFurther.length ? 'none-stopped' : 'nobody')), {
-                            total: readersUntilHereOnly.length + readersFurther.length,
-                            stopped: readersUntilHereOnly.length,
-                        })),
+                        title,
                     }, [
-                        app.forum.attribute('who-read.showCountOfReadersWhoStopped') ? readersUntilHereOnly.length : (readersUntilHereOnly.length + readersFurther.length),
+                        app.forum.attribute('who-read.showCountOfReadersWhoStopped') ? readersUntilHereOnly.length : totalReadersWhoHaveSeenThisPost,
                         ' ',
                         icon('fas fa-check-double'),
                         ' ',
@@ -99,8 +108,8 @@ export default function () {
                             readersEnd,
                         }));
                     },
-                    title: extractText(app.translator.trans(translationPrefix + 'to-end' + (readersEnd.length ? '' : '-nobody'), {
-                        total: readersEnd.length,
+                    title: extractText(app.translator.transChoice(translationPrefix + 'read-to-end', readersEnd.length, {
+                        count: readersEnd.length,
                     })),
                 }, [
                     readersEnd.length,

@@ -9,6 +9,7 @@ import addInDiscussionHero from './addInDiscussionHero';
 import addInDiscussionList from './addInDiscussionList';
 import addInPostStream from './addInPostStream';
 import addUnreadControls from './addUnreadControls';
+import patchTranslatorPlural from './patchTranslatorPlural';
 
 app.initializers.add('clarkwinkelmann-who-read', () => {
     app.store.models['clarkwinkelmann-who-readers'] = UserState;
@@ -46,4 +47,5 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
     addInDiscussionList();
     addInPostStream();
     addUnreadControls();
+    patchTranslatorPlural();
 });
