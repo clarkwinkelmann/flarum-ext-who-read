@@ -1,21 +1,23 @@
 import app from 'flarum/app';
 import Badge from 'flarum/components/Badge';
 
-/* global m, $ */
+/* global flarum */
+
+const translationPrefix = 'clarkwinkelmann-who-read.forum.badges.';
 
 export default function (badges, reader) {
     if (flarum.extensions['flarum-subscriptions']) {
         switch (reader.subscription()) {
             case 'follow':
                 badges.add('subscriptions-follow', Badge.component({
-                    label: app.translator.trans('flarum-subscriptions.forum.badge.following_tooltip'),
+                    label: app.translator.trans(translationPrefix + 'following'),
                     icon: 'fas fa-star',
                     type: 'following',
                 }));
                 break;
             case 'ignore':
                 badges.add('subscriptions-ignoring', Badge.component({
-                    label: app.translator.trans('flarum-subscriptions.forum.badge.ignoring_tooltip'),
+                    label: app.translator.trans(translationPrefix + 'ignoring'),
                     icon: 'far fa-eye-slash',
                     type: 'ignoring',
                 }));
@@ -27,7 +29,7 @@ export default function (badges, reader) {
         badges.add('who-read-unread', Badge.component({
             type: 'who-read-unread',
             icon: app.forum.attribute('who-read.unreadIcon'),
-            label: app.translator.trans('clarkwinkelmann-who-read.forum.badges.unread'),
+            label: app.translator.trans(translationPrefix + 'unread'),
         }));
     }
 }

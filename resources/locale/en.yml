@@ -17,6 +17,8 @@ clarkwinkelmann-who-read:
             set-unread: Mark unread
             remove-unread: Remove unread
         badges:
+            following: => flarum-subscriptions.forum.badge.following_tooltip
+            ignoring: => flarum-subscriptions.forum.badge.ignoring_tooltip
             unread: Marked as unread
         modal:
             title: Readers
