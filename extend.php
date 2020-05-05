@@ -14,6 +14,7 @@ return [
 
     new Extend\Locales(__DIR__ . '/resources/locale'),
 
+    new Extenders\AddGambits(),
     new Extenders\DiscussionAttributes(),
     new Extenders\ForumAttributes(),
     new Extenders\SaveDiscussionUnread(),
