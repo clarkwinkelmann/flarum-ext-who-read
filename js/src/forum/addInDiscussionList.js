@@ -19,18 +19,20 @@ export default function () {
             return;
         }
 
-        let readers = this.props.discussion.clarkwinkelmannWhoReaders();
+        const {discussion} = this.attrs;
+
+        let readers = discussion.clarkwinkelmannWhoReaders();
 
         if (!readers) {
             return;
         }
 
-        readers = filterVeryBehind(readers, this.props.discussion);
+        readers = filterVeryBehind(readers, discussion);
 
         if (readers.length) {
             items.add('who-read', AvatarSummary.component({
                 readers,
-                discussion: this.props.discussion,
+                discussion,
             }), -120);
         }
     });

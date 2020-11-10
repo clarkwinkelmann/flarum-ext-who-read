@@ -6,14 +6,13 @@ import Button from 'flarum/components/Button';
 
 export default class UnreadButton extends Component {
     view() {
-        const {discussion, className} = this.props;
+        const {discussion, className} = this.attrs;
 
         const unread = !!discussion.attribute('whoReadUnread');
 
         return Button.component({
             className,
             icon: app.forum.attribute('who-read.unreadIcon'),
-            children: app.translator.trans('clarkwinkelmann-who-read.forum.controls.' + (unread ? 'remove' : 'set') + '-unread'),
             onclick() {
                 discussion.save({
                     whoReadUnread: !unread,
@@ -21,6 +20,6 @@ export default class UnreadButton extends Component {
                     m.redraw();
                 });
             },
-        });
+        }, app.translator.trans('clarkwinkelmann-who-read.forum.controls.' + (unread ? 'remove' : 'set') + '-unread'));
     }
 }

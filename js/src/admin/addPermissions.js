@@ -38,7 +38,7 @@ export default function () {
 
         permissionGroups.add('clarkwinkelmann-who-read', {
             label: app.translator.trans(translationPrefix + 'heading'),
-            children: items.toArray()
+            children: items.toArray(),
         });
     });
 }

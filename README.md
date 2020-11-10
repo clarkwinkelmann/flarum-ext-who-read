@@ -29,10 +29,21 @@ If you decide to show the read status of all members on a large forum, performan
 
     composer require clarkwinkelmann/flarum-ext-who-read
 
+## Support
+
+This extension is under **minimal maintenance**.
+
+It was developed for a client and released as open-source for the benefit of the community.
+I might publish simple bugfixes or compatibility updates for free.
+
+You can [contact me](https://clarkwinkelmann.com/flarum) to sponsor additional features or updates.
+
+Support is offered on a "best effort" basis through the Flarum community thread.
+
+**Sponsors**: [FibraClick](https://forum.fibra.click), [Phenomlab](https://phenomlab.net/)
+
 ## Links
 
 - [GitHub](https://github.com/clarkwinkelmann/flarum-ext-who-read)
 - [Packagist](https://packagist.org/packages/clarkwinkelmann/flarum-ext-who-read)
 - [Discuss](https://discuss.flarum.org/d/23066)
-
-The initial version of this extension has been sponsored by [FibraClick Forum](https://forum.fibra.click).

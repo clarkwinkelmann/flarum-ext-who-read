@@ -1,5 +1,6 @@
 import app from 'flarum/app';
 import Component from 'flarum/Component';
+import Link from 'flarum/components/Link';
 import avatar from 'flarum/helpers/avatar';
 import listItems from 'flarum/helpers/listItems';
 import username from 'flarum/helpers/username';
@@ -24,15 +25,20 @@ export default class AvatarsDetails extends Component {
 
             appendReaderBadges(badges, reader);
 
-            return m('li.WhoRead-item', m('a', {
+            return m('li.WhoRead-item', m(Link, {
                 href: app.route.user(user),
                 title: extractText(app.translator.trans('clarkwinkelmann-who-read.forum.tooltip.last-read-at', {
                     user,
                     ago: humanTime(reader.last_read_at()),
                 })),
-                config(element) {
-                    $(element).tooltip({placement: 'top'});
-                    m.route.apply(this, arguments);
+                oncreate(vnode) {
+                    $(vnode.dom).tooltip({
+                        placement: 'top',
+                        viewport: {
+                            selector: '.Modal',
+                            padding: 10,
+                        },
+                    });
                 },
             }, [
                 m('.WhoRead-avatar', [

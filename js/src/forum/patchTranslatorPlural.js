@@ -7,6 +7,7 @@ export default function () {
      * Explicit rules are added as keys to an array object, which is then looped through via .forEach
      * As the array is always empty, those rules are never evaluated
      * Additionally the values returned inside .forEach would never be returned as the function return value either
+     * https://github.com/flarum/core/issues/2062
      */
     override(Translator.prototype, 'pluralize', function (original, translation, number) {
         const sPluralRegex = new RegExp(/^\w+\: +(.+)$/),

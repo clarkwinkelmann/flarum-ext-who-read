@@ -23,8 +23,7 @@ export default class WhoReadSettingsModal extends SettingsModal {
                     onchange: value => {
                         this.setting(settingsPrefix + 'showInDiscussionList')(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + 'show-in-discussion-list'),
-                }),
+                }, app.translator.trans(translationPrefix + 'show-in-discussion-list')),
             ]),
             m('.Form-group', [
                 Switch.component({
@@ -32,8 +31,7 @@ export default class WhoReadSettingsModal extends SettingsModal {
                     onchange: value => {
                         this.setting(settingsPrefix + 'showInHero')(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + 'show-in-hero'),
-                }),
+                }, app.translator.trans(translationPrefix + 'show-in-hero')),
             ]),
             m('.Form-group', [
                 Switch.component({
@@ -41,8 +39,7 @@ export default class WhoReadSettingsModal extends SettingsModal {
                     onchange: value => {
                         this.setting(settingsPrefix + 'showBetweenPosts')(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + 'show-between-posts'),
-                }),
+                }, app.translator.trans(translationPrefix + 'show-between-posts')),
             ]),
             m('.Form-group', [
                 Switch.component({
@@ -50,8 +47,7 @@ export default class WhoReadSettingsModal extends SettingsModal {
                     onchange: value => {
                         this.setting(settingsPrefix + 'showCountOfReadersWhoStopped')(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + 'show-count-of-readers-who-stopped'),
-                }),
+                }, app.translator.trans(translationPrefix + 'show-count-of-readers-who-stopped')),
             ]),
             m('.Form-group', [
                 m('label', app.translator.trans(translationPrefix + 'hide-when-behind')),
@@ -95,8 +91,7 @@ export default class WhoReadSettingsModal extends SettingsModal {
 
                         this.setting(settingsPrefix + 'onlyGroups')(newValue.join(','));
                     },
-                    children: group.nameSingular(),
-                })),
+                }, group.nameSingular())),
             ]),
         ];
     }

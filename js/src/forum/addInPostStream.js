@@ -12,17 +12,17 @@ import UnreadButton from './components/UnreadButton';
 const translationPrefix = 'clarkwinkelmann-who-read.forum.footer.';
 
 export default function () {
-    extend(Post.prototype, 'init', function () {
+    extend(Post.prototype, 'oninit', function () {
         if (!app.forum.attribute('who-read.showBetweenPosts')) {
             return;
         }
 
         this.subtree.check(
             // Refresh if the user toggles between read and unread
-            () => this.props.post.discussion().attribute('whoReadUnread'),
+            () => this.attrs.post.discussion().attribute('whoReadUnread'),
             // Make the post redraws when the last read post number changes,
             // so that scrolling through the discussion reflects your own read status
-            () => this.props.post.discussion().lastReadPostNumber()
+            () => this.attrs.post.discussion().lastReadPostNumber()
         );
     });
 
@@ -33,7 +33,8 @@ export default function () {
                 return;
             }
 
-            const discussion = this.props.post.discussion();
+            const {post} = this.attrs;
+            const discussion = post.discussion();
 
             // If the post is loaded on a user profile, we don't have access to the list
             // of post IDs in that discussion. If that's the case, skip
@@ -44,7 +45,7 @@ export default function () {
             }
 
             const postIds = discussion.postIds();
-            const currentPostIndex = postIds.indexOf(this.props.post.id());
+            const currentPostIndex = postIds.indexOf(post.id());
 
             if (currentPostIndex !== -1 && currentPostIndex + 1 < postIds.length) {
                 const nextPostId = postIds[currentPostIndex + 1];
@@ -52,7 +53,7 @@ export default function () {
 
                 if (nextPost) {
                     const readersUntilHereOnly = discussion.clarkwinkelmannWhoReaders().filter(
-                        reader => reader.last_read_post_number() >= this.props.post.number() && reader.last_read_post_number() < nextPost.number()
+                        reader => reader.last_read_post_number() >= post.number() && reader.last_read_post_number() < nextPost.number()
                     );
 
                     const readersFurther = discussion.clarkwinkelmannWhoReaders().filter(
@@ -76,10 +77,10 @@ export default function () {
                         onclick: event => {
                             event.preventDefault();
 
-                            app.modal.show(new ReadersModal({
+                            app.modal.show(ReadersModal, {
                                 readersUntilHereOnly,
                                 readersFurther,
-                            }));
+                            });
                         },
                         title,
                     }, [
@@ -104,9 +105,9 @@ export default function () {
                     onclick: event => {
                         event.preventDefault();
 
-                        app.modal.show(new ReadersModal({
+                        app.modal.show(ReadersModal, {
                             readersEnd,
-                        }));
+                        });
                     },
                     title: extractText(app.translator.transChoice(translationPrefix + 'read-to-end', readersEnd.length, {
                         count: readersEnd.length,

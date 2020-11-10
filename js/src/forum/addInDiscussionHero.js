@@ -12,13 +12,15 @@ export default function () {
             return;
         }
 
-        let readers = this.props.discussion.clarkwinkelmannWhoReaders();
+        const {discussion} = this.attrs;
+
+        let readers = discussion.clarkwinkelmannWhoReaders();
 
         if (!readers) {
             return;
         }
 
-        readers = filterVeryBehind(readers, this.props.discussion);
+        readers = filterVeryBehind(readers, discussion);
 
         if (readers.length) {
             items.add('who-read', Button.component({
@@ -26,19 +28,19 @@ export default function () {
                 onclick: event => {
                     event.preventDefault();
 
-                    app.modal.show(new ReadersModal({
+                    app.modal.show(ReadersModal, {
                         readersEnd: readers.filter(
-                            reader => reader.last_read_post_number() >= this.props.discussion.lastPostNumber()
+                            reader => reader.last_read_post_number() >= discussion.lastPostNumber()
                         ),
                         readersBehind: readers.filter(
-                            reader => reader.last_read_post_number() < this.props.discussion.lastPostNumber()
+                            reader => reader.last_read_post_number() < discussion.lastPostNumber()
                         ),
-                    }));
+                    });
                 },
             }, [
                 AvatarSummary.component({
                     readers,
-                    discussion: this.props.discussion,
+                    discussion,
                     extendable: true,
                 }),
             ]));
