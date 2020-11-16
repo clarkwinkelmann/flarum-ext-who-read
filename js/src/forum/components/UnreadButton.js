@@ -1,12 +1,11 @@
 import app from 'flarum/app';
-import Component from 'flarum/Component';
 import Button from 'flarum/components/Button';
 
 /* global m */
 
-export default class UnreadButton extends Component {
-    view() {
-        const {discussion, className} = this.attrs;
+export default class UnreadButton {
+    view(vnode) {
+        const {discussion, className} = vnode.attrs;
 
         const unread = !!discussion.attribute('whoReadUnread');
 

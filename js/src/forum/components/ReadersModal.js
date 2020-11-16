@@ -27,7 +27,7 @@ export default class ReadersModal extends Modal {
 
         return [
             m('h3', app.translator.trans(translationPrefix + translationKey)),
-            AvatarsDetails.component({
+            m(AvatarsDetails, {
                 readers: this.attrs[dataKey],
             }),
         ];

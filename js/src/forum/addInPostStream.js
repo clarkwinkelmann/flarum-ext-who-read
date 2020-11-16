@@ -9,6 +9,8 @@ import AvatarSummary from './components/AvatarSummary';
 import ReadersModal from './components/ReadersModal';
 import UnreadButton from './components/UnreadButton';
 
+/* global m */
+
 const translationPrefix = 'clarkwinkelmann-who-read.forum.footer.';
 
 export default function () {
@@ -88,7 +90,7 @@ export default function () {
                         ' ',
                         icon('fas fa-check-double'),
                         ' ',
-                        AvatarSummary.component({
+                        m(AvatarSummary, {
                             readers: readersUntilHereOnly,
                         }),
                     ]));
@@ -117,13 +119,13 @@ export default function () {
                     ' ',
                     icon('fas fa-check-double'),
                     ' ',
-                    AvatarSummary.component({
+                    m(AvatarSummary, {
                         readers: readersEnd,
                     }),
                 ]));
 
                 if (discussion.attribute('whoReadCanMarkUnread')) {
-                    items.add('who-read-unread', UnreadButton.component({
+                    items.add('who-read-unread', m(UnreadButton, {
                         className: 'Button',
                         discussion,
                     }));

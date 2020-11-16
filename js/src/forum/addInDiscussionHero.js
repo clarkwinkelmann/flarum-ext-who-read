@@ -6,6 +6,8 @@ import AvatarSummary from './components/AvatarSummary';
 import ReadersModal from './components/ReadersModal';
 import filterVeryBehind from './utils/filterVeryBehind';
 
+/* global m */
+
 export default function () {
     extend(DiscussionHero.prototype, 'items', function (items) {
         if (!app.forum.attribute('who-read.showInHero')) {
@@ -37,13 +39,11 @@ export default function () {
                         ),
                     });
                 },
-            }, [
-                AvatarSummary.component({
-                    readers,
-                    discussion,
-                    extendable: true,
-                }),
-            ]));
+            }, m(AvatarSummary, {
+                readers,
+                discussion,
+                extendable: true,
+            })));
         }
     });
 }

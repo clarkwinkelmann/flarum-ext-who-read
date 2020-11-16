@@ -5,6 +5,8 @@ import DiscussionListItem from 'flarum/components/DiscussionListItem';
 import AvatarSummary from './components/AvatarSummary';
 import filterVeryBehind from './utils/filterVeryBehind';
 
+/* global m */
+
 export default function () {
     extend(DiscussionList.prototype, 'requestParams', function (params) {
         if (!app.forum.attribute('who-read.showInDiscussionList')) {
@@ -30,7 +32,7 @@ export default function () {
         readers = filterVeryBehind(readers, discussion);
 
         if (readers.length) {
-            items.add('who-read', AvatarSummary.component({
+            items.add('who-read', m(AvatarSummary, {
                 readers,
                 discussion,
             }), -120);

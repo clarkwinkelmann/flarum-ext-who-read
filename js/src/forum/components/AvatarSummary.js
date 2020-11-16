@@ -1,5 +1,4 @@
 import app from 'flarum/app';
-import Component from 'flarum/Component';
 import avatar from 'flarum/helpers/avatar';
 import listItems from 'flarum/helpers/listItems';
 import extractText from 'flarum/utils/extractText';
@@ -11,11 +10,11 @@ import appendReaderBadges from '../utils/appendReaderBadges';
 
 const translationPrefix = 'clarkwinkelmann-who-read.forum.';
 
-export default class Readers extends Component {
-    view() {
+export default class AvatarSummary {
+    view(vnode) {
         const LIMIT = app.forum.attribute('who-read.maxVisible');
 
-        const {readers, extendable, discussion} = this.attrs;
+        const {readers, extendable, discussion} = vnode.attrs;
 
         return m('ul.WhoRead-list.WhoRead-summary', readers.map((reader, index) => {
             if (!this.showAll) {
