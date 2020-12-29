@@ -1,6 +1,6 @@
 import {extend} from 'flarum/extend';
 import app from 'flarum/app';
-import DiscussionPage from 'flarum/components/DiscussionPage';
+import DiscussionListState from 'flarum/states/DiscussionListState';
 import Discussion from 'flarum/models/Discussion';
 import Badge from 'flarum/components/Badge';
 import Model from 'flarum/Model';
@@ -34,8 +34,7 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
         }
     });
 
-    // Doing this here because it's used by both DiscussionHero and PostStream
-    extend(DiscussionPage.prototype, 'params', function (params) {
+    extend(DiscussionListState.prototype, 'requestParams', function (params) {
         if (!app.forum.attribute('who-read.canSee')) {
             return;
         }

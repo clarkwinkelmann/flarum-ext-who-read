@@ -1,23 +1,15 @@
 <?php
 
-namespace ClarkWinkelmann\WhoRead\Extenders;
+namespace ClarkWinkelmann\WhoRead\Listeners;
 
 use Flarum\Discussion\Event\Saving;
 use Flarum\Discussion\Event\UserDataSaving;
-use Flarum\Extend\ExtenderInterface;
-use Flarum\Extension\Extension;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 
-class SaveDiscussionUnread implements ExtenderInterface
+class SaveDiscussionUnread
 {
-    public function extend(Container $container, Extension $extension = null)
-    {
-        $container['events']->listen(Saving::class, [$this, 'saving']);
-    }
-
-    public function saving(Saving $event)
+    public function handle(Saving $event)
     {
         $unread = Arr::get($event->data, 'attributes.whoReadUnread');
 
