@@ -7,7 +7,7 @@ use Flarum\Discussion\Discussion;
 
 class DiscussionAttributes
 {
-    public function __invoke(DiscussionSerializer $serializer, Discussion $discussion)
+    public function __invoke(DiscussionSerializer $serializer, Discussion $discussion): array
     {
         $actor = $serializer->getActor();
 

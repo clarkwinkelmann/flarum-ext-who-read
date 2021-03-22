@@ -6,7 +6,7 @@ use Flarum\Api\Controller;
 use Flarum\Api\Serializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Discussion\Event\Saving;
-use Flarum\Event\ConfigureDiscussionGambits;
+use Flarum\Discussion\Search\DiscussionSearcher;
 use Flarum\Extend;
 
 return [
@@ -22,18 +22,18 @@ return [
     (new Extend\Model(Discussion::class))
         ->relationship('clarkwinkelmannWhoReaders', DiscussionReaderRelationship::class),
 
+    (new Extend\SimpleFlarumSearch(DiscussionSearcher::class))
+        ->addGambit(Gambits\NotFullyRead::class),
+
     (new Extend\Event())
-        ->listen(ConfigureDiscussionGambits::class, function (ConfigureDiscussionGambits $event) {
-            $event->gambits->add(Gambits\NotFullyRead::class);
-        })
         ->listen(Saving::class, Listeners\SaveDiscussionUnread::class),
 
     (new Extend\ApiSerializer(Serializer\ForumSerializer::class))
-        ->mutate(ForumAttributes::class),
+        ->attributes(ForumAttributes::class),
 
     (new Extend\ApiSerializer(Serializer\DiscussionSerializer::class))
         ->hasMany('clarkwinkelmannWhoReaders', Serializers\UserStateSerializer::class)
-        ->mutate(DiscussionAttributes::class),
+        ->attributes(DiscussionAttributes::class),
 
     (new Extend\ApiController(Controller\ListDiscussionsController::class))
         ->addInclude('clarkwinkelmannWhoReaders.user.groups'),

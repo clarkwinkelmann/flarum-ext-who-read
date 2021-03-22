@@ -9,6 +9,13 @@ use Illuminate\Support\Arr;
 
 class SaveDiscussionUnread
 {
+    protected $events;
+
+    public function __construct(Dispatcher $events)
+    {
+        $this->events = $events;
+    }
+
     public function handle(Saving $event)
     {
         $unread = Arr::get($event->data, 'attributes.whoReadUnread');
@@ -19,12 +26,7 @@ class SaveDiscussionUnread
             $state = $event->discussion->stateFor($event->actor);
             $state->who_read_unread = $unread;
 
-            /**
-             * @var $dispatcher Dispatcher
-             */
-            $dispatcher = app(Dispatcher::class);
-
-            $dispatcher->dispatch(
+            $this->events->dispatch(
                 new UserDataSaving($state)
             );
 

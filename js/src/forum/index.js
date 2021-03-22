@@ -11,6 +11,8 @@ import addInPostStream from './addInPostStream';
 import addUnreadControls from './addUnreadControls';
 import patchTranslatorPlural from './patchTranslatorPlural';
 
+/* global m */
+
 app.initializers.add('clarkwinkelmann-who-read', () => {
     app.store.models['clarkwinkelmann-who-readers'] = UserState;
     Discussion.prototype.clarkwinkelmannWhoReaders = Discussion.hasMany('clarkwinkelmannWhoReaders');
