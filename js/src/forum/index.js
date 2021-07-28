@@ -1,15 +1,14 @@
-import {extend} from 'flarum/extend';
-import app from 'flarum/app';
-import DiscussionListState from 'flarum/states/DiscussionListState';
-import Discussion from 'flarum/models/Discussion';
-import Badge from 'flarum/components/Badge';
-import Model from 'flarum/Model';
+import {extend} from 'flarum/common/extend';
+import app from 'flarum/forum/app';
+import DiscussionListState from 'flarum/forum/states/DiscussionListState';
+import Discussion from 'flarum/common/models/Discussion';
+import Badge from 'flarum/common/components/Badge';
+import Model from 'flarum/common/Model';
 import UserState from './models/UserState';
 import addInDiscussionHero from './addInDiscussionHero';
 import addInDiscussionList from './addInDiscussionList';
 import addInPostStream from './addInPostStream';
 import addUnreadControls from './addUnreadControls';
-import patchTranslatorPlural from './patchTranslatorPlural';
 
 /* global m */
 
@@ -48,5 +47,4 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
     addInDiscussionList();
     addInPostStream();
     addUnreadControls();
-    patchTranslatorPlural();
 });

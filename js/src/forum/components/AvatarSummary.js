@@ -1,9 +1,10 @@
-import app from 'flarum/app';
-import avatar from 'flarum/helpers/avatar';
-import listItems from 'flarum/helpers/listItems';
-import extractText from 'flarum/utils/extractText';
-import humanTime from 'flarum/utils/humanTime';
-import ItemList from 'flarum/utils/ItemList';
+import app from 'flarum/forum/app';
+import Tooltip from 'flarum/common/components/Tooltip';
+import avatar from 'flarum/common/helpers/avatar';
+import listItems from 'flarum/common/helpers/listItems';
+import extractText from 'flarum/common/utils/extractText';
+import humanTime from 'flarum/common/utils/humanTime';
+import ItemList from 'flarum/common/utils/ItemList';
 import appendReaderBadges from '../utils/appendReaderBadges';
 
 /* global m, $ */
@@ -59,22 +60,17 @@ export default class AvatarSummary {
                 toolTipTranslationKey = outdated ? 'last-read-at-behind' : 'last-read-at-up-to-date';
             }
 
-            return m('li.WhoRead-item', m('span', {
-                title: extractText(app.translator.trans(translationPrefix + 'tooltip.' + toolTipTranslationKey, {
+            return m('li.WhoRead-item', m(Tooltip, {
+                text: extractText(app.translator.trans(translationPrefix + 'tooltip.' + toolTipTranslationKey, {
                     user,
                     ago: humanTime(reader.last_read_at()),
                 })),
-                oncreate(vnode) {
-                    $(vnode.dom).tooltip({placement: 'top'});
-                },
+            }, m('.WhoRead-avatar', {
+                className: outdated ? 'WhoRead-avatar--outdated' : '',
             }, [
-                m('.WhoRead-avatar', {
-                    className: outdated ? 'WhoRead-avatar--outdated' : '',
-                }, [
-                    avatar(user),
-                    m('ul.badges', listItems(badges.toArray())),
-                ]),
-            ]));
+                avatar(user),
+                m('ul.badges', listItems(badges.toArray())),
+            ])));
         }));
     }
 }

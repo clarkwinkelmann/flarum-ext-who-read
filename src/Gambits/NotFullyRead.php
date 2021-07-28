@@ -3,12 +3,14 @@
 namespace ClarkWinkelmann\WhoRead\Gambits;
 
 use Flarum\Discussion\Discussion;
+use Flarum\Filter\FilterInterface;
+use Flarum\Filter\FilterState;
 use Flarum\Search\AbstractRegexGambit;
 use Flarum\Search\SearchState;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Database\Query\Builder;
 
-class NotFullyRead extends AbstractRegexGambit
+class NotFullyRead extends AbstractRegexGambit implements FilterInterface
 {
     protected $settings;
 
@@ -17,7 +19,7 @@ class NotFullyRead extends AbstractRegexGambit
         $this->settings = $settings;
     }
 
-    protected function getGambitPattern()
+    protected function getGambitPattern(): string
     {
         return 'is:notfullyread';
     }
@@ -32,6 +34,25 @@ class NotFullyRead extends AbstractRegexGambit
     }
 
     protected function conditions(SearchState $search, array $matches, $negate)
+    {
+        $this->constrain($search->getQuery(), $negate);
+    }
+
+    public function getFilterKey(): string
+    {
+        return 'notfullyread';
+    }
+
+    public function filter(FilterState $filterState, string $filterValue, bool $negate)
+    {
+        if (!$filterState->getActor()->hasPermission('who-read.seeRead')) {
+            return;
+        }
+
+        $this->constrain($filterState->getQuery(), $negate);
+    }
+
+    protected function constrain(Builder $query, bool $negate)
     {
         $fullyReadQuery = Discussion::query()
             ->selectRaw('discussion_id, max(last_read_post_number) as last_read_post_number_by_anyone, last_post_number')
@@ -51,12 +72,6 @@ class NotFullyRead extends AbstractRegexGambit
             ->pluck('discussion_id')
             ->all();
 
-        $search->getQuery()->where(function (Builder $query) use ($fullyReadDiscussionIds, $negate) {
-            if (!$negate) {
-                $query->whereNotIn('id', $fullyReadDiscussionIds);
-            } else {
-                $query->whereIn('id', $fullyReadDiscussionIds);
-            }
-        });
+        $query->whereIn('id', $fullyReadDiscussionIds, 'and', !$negate);
     }
 }

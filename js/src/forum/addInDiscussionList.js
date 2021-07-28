@@ -1,7 +1,7 @@
-import {extend} from 'flarum/extend';
-import app from 'flarum/app';
-import DiscussionList from 'flarum/components/DiscussionList';
-import DiscussionListItem from 'flarum/components/DiscussionListItem';
+import {extend} from 'flarum/common/extend';
+import app from 'flarum/forum/app';
+import DiscussionList from 'flarum/forum/components/DiscussionList';
+import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import AvatarSummary from './components/AvatarSummary';
 import filterVeryBehind from './utils/filterVeryBehind';
 

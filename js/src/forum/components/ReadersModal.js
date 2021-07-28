@@ -1,5 +1,5 @@
-import app from 'flarum/app';
-import Modal from 'flarum/components/Modal';
+import app from 'flarum/forum/app';
+import Modal from 'flarum/common/components/Modal';
 import AvatarsDetails from './AvatarsDetails';
 
 /* global m */

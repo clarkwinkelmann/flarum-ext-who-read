@@ -1,11 +1,12 @@
-import app from 'flarum/app';
-import Link from 'flarum/components/Link';
-import avatar from 'flarum/helpers/avatar';
-import listItems from 'flarum/helpers/listItems';
-import username from 'flarum/helpers/username';
-import userOnline from 'flarum/helpers/userOnline';
-import extractText from 'flarum/utils/extractText';
-import humanTime from 'flarum/utils/humanTime';
+import app from 'flarum/forum/app';
+import Link from 'flarum/common/components/Link';
+import Tooltip from 'flarum/common/components/Tooltip';
+import avatar from 'flarum/common/helpers/avatar';
+import listItems from 'flarum/common/helpers/listItems';
+import username from 'flarum/common/helpers/username';
+import userOnline from 'flarum/common/helpers/userOnline';
+import extractText from 'flarum/common/utils/extractText';
+import humanTime from 'flarum/common/utils/humanTime';
 import appendReaderBadges from '../utils/appendReaderBadges';
 
 /* global m, $ */
@@ -24,21 +25,14 @@ export default class AvatarsDetails {
 
             appendReaderBadges(badges, reader);
 
-            return m('li.WhoRead-item', m(Link, {
-                href: app.route.user(user),
-                title: extractText(app.translator.trans('clarkwinkelmann-who-read.forum.tooltip.last-read-at', {
+            return m('li.WhoRead-item', m(Tooltip, {
+                text: extractText(app.translator.trans('clarkwinkelmann-who-read.forum.tooltip.last-read-at', {
                     user,
                     ago: humanTime(reader.last_read_at()),
                 })),
-                oncreate(vnode) {
-                    $(vnode.dom).tooltip({
-                        placement: 'top',
-                        viewport: {
-                            selector: '.Modal',
-                            padding: 10,
-                        },
-                    });
-                },
+            }, m(Link, {
+                href: app.route.user(user),
+                'data-container': 'body', // Bootstrap tooltip option so we overflow .Modal edge
             }, [
                 m('.WhoRead-avatar', [
                     avatar(user),
@@ -48,7 +42,7 @@ export default class AvatarsDetails {
                     userOnline(user),
                     username(user),
                 ]),
-            ]));
+            ])));
         }));
     }
 }

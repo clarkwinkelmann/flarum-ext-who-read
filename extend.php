@@ -6,6 +6,7 @@ use Flarum\Api\Controller;
 use Flarum\Api\Serializer;
 use Flarum\Discussion\Discussion;
 use Flarum\Discussion\Event\Saving;
+use Flarum\Discussion\Filter\DiscussionFilterer;
 use Flarum\Discussion\Search\DiscussionSearcher;
 use Flarum\Extend;
 
@@ -24,6 +25,9 @@ return [
 
     (new Extend\SimpleFlarumSearch(DiscussionSearcher::class))
         ->addGambit(Gambits\NotFullyRead::class),
+
+    (new Extend\Filter(DiscussionFilterer::class))
+        ->addFilter(Gambits\NotFullyRead::class),
 
     (new Extend\Event())
         ->listen(Saving::class, Listeners\SaveDiscussionUnread::class),

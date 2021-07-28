@@ -1,5 +1,5 @@
-import {extend} from 'flarum/extend';
-import DiscussionControls from 'flarum/utils/DiscussionControls';
+import {extend} from 'flarum/common/extend';
+import DiscussionControls from 'flarum/forum/utils/DiscussionControls';
 import UnreadButton from './components/UnreadButton';
 
 /* global m */

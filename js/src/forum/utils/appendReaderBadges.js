@@ -1,5 +1,5 @@
-import app from 'flarum/app';
-import Badge from 'flarum/components/Badge';
+import app from 'flarum/forum/app';
+import Badge from 'flarum/common/components/Badge';
 
 /* global flarum */
 

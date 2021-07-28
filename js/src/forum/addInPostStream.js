@@ -1,10 +1,10 @@
-import {extend} from 'flarum/extend';
-import app from 'flarum/app';
-import Button from 'flarum/components/Button';
-import CommentPost from 'flarum/components/CommentPost';
-import Post from 'flarum/components/Post';
-import icon from 'flarum/helpers/icon';
-import extractText from 'flarum/utils/extractText';
+import {extend} from 'flarum/common/extend';
+import app from 'flarum/forum/app';
+import Button from 'flarum/common/components/Button';
+import CommentPost from 'flarum/forum/components/CommentPost';
+import Post from 'flarum/forum/components/Post';
+import icon from 'flarum/common/helpers/icon';
+import extractText from 'flarum/common/utils/extractText';
 import AvatarSummary from './components/AvatarSummary';
 import ReadersModal from './components/ReadersModal';
 import UnreadButton from './components/UnreadButton';
@@ -24,7 +24,19 @@ export default function () {
             () => this.attrs.post.discussion().attribute('whoReadUnread'),
             // Make the post redraws when the last read post number changes,
             // so that scrolling through the discussion reflects your own read status
-            () => this.attrs.post.discussion().lastReadPostNumber()
+            () => this.attrs.post.discussion().lastReadPostNumber(),
+            // Because of some odd magic in Flarum's store, discussion.whoReadUnread and discussion.lastReadPostNumber
+            // are actually updated just slightly before the relationship and a redraw triggers in between
+            // So this makes the post redraw too early and since the relationship is used to render the avatars
+            // and badges they won't be up to date. So we need to use the relationship as source of data as well
+            () => JSON.stringify((this.attrs.post.discussion().clarkwinkelmannWhoReaders() || []).map(reader => [
+                // The state ID will contain the user ID, so together with the other informations we can be sure it's a different state
+                reader.id(),
+                // Fixes the unread badge appearing out of sync on the user avatars
+                reader.unread(),
+                // Fixes the avatars not updating as you scroll
+                reader.last_read_post_number(),
+            ]))
         );
     });
 
@@ -64,12 +76,12 @@ export default function () {
 
                     const totalReadersWhoHaveSeenThisPost = readersUntilHereOnly.length + readersFurther.length;
 
-                    let title = extractText(app.translator.transChoice(translationPrefix + 'read-this-post', totalReadersWhoHaveSeenThisPost, {
+                    let title = extractText(app.translator.trans(translationPrefix + 'read-this-post', {
                         count: totalReadersWhoHaveSeenThisPost,
                     }));
 
                     if (totalReadersWhoHaveSeenThisPost > 0) {
-                        title += '. ' + extractText(app.translator.transChoice(translationPrefix + 'read-no-further', readersUntilHereOnly.length, {
+                        title += '. ' + extractText(app.translator.trans(translationPrefix + 'read-no-further', {
                             count: readersUntilHereOnly.length,
                         }));
                     }
@@ -111,7 +123,7 @@ export default function () {
                             readersEnd,
                         });
                     },
-                    title: extractText(app.translator.transChoice(translationPrefix + 'read-to-end', readersEnd.length, {
+                    title: extractText(app.translator.trans(translationPrefix + 'read-to-end', {
                         count: readersEnd.length,
                     })),
                 }, [

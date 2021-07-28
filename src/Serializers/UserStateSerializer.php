@@ -14,7 +14,7 @@ class UserStateSerializer extends AbstractSerializer
      * @param UserState $model
      * @return string
      */
-    public function getId($model)
+    public function getId($model): string
     {
         return $model->user_id . '-' . $model->discussion_id;
     }
@@ -23,7 +23,7 @@ class UserStateSerializer extends AbstractSerializer
      * @param UserState $model
      * @return array
      */
-    protected function getDefaultAttributes($model)
+    protected function getDefaultAttributes($model): array
     {
         $canSeeUnread = $this->actor->hasPermission('who-read.seeUnread');
 

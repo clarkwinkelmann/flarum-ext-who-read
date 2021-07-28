@@ -1,6 +1,6 @@
-import app from 'flarum/app';
-import Switch from 'flarum/components/Switch';
-import Group from 'flarum/models/Group';
+import app from 'flarum/admin/app';
+import Switch from 'flarum/common/components/Switch';
+import Group from 'flarum/common/models/Group';
 
 /* global m */
 

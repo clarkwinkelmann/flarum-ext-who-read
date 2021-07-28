@@ -1,4 +1,4 @@
-import Model from 'flarum/Model';
+import Model from 'flarum/common/Model';
 
 export default class UserState extends Model {
     last_read_at = Model.attribute('last_read_at');
