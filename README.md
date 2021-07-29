@@ -40,7 +40,7 @@ You can [contact me](https://clarkwinkelmann.com/flarum) to sponsor additional f
 
 Support is offered on a "best effort" basis through the Flarum community thread.
 
-**Sponsors**: [FibraClick](https://forum.fibra.click), [Phenomlab](https://phenomlab.net/), [ctml](https://discuss.flarum.org/u/ctml)
+**Sponsors**: [FibraClick](https://forum.fibra.click), [Phenomlab](https://phenomlab.net/), [ctml](https://discuss.flarum.org/u/ctml), [GreXXL](https://www.flarumde.com/)
 
 ## Links
 
