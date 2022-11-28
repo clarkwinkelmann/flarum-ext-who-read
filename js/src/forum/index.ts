@@ -10,8 +10,6 @@ import addInDiscussionList from './addInDiscussionList';
 import addInPostStream from './addInPostStream';
 import addUnreadControls from './addUnreadControls';
 
-/* global m */
-
 app.initializers.add('clarkwinkelmann-who-read', () => {
     app.store.models['clarkwinkelmann-who-readers'] = UserState;
     Discussion.prototype.clarkwinkelmannWhoReaders = Discussion.hasMany('clarkwinkelmannWhoReaders');
@@ -37,6 +35,10 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
 
     extend(DiscussionListState.prototype, 'requestParams', function (params) {
         if (!app.forum.attribute('who-read.canSee')) {
+            return;
+        }
+
+        if (!Array.isArray(params.include)) {
             return;
         }
 

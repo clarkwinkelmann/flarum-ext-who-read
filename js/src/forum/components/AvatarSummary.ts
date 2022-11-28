@@ -1,3 +1,4 @@
+import {ClassComponent, Vnode} from 'mithril';
 import app from 'flarum/forum/app';
 import Tooltip from 'flarum/common/components/Tooltip';
 import avatar from 'flarum/common/helpers/avatar';
@@ -5,15 +6,24 @@ import listItems from 'flarum/common/helpers/listItems';
 import extractText from 'flarum/common/utils/extractText';
 import humanTime from 'flarum/common/utils/humanTime';
 import ItemList from 'flarum/common/utils/ItemList';
+import Discussion from 'flarum/common/models/Discussion';
 import appendReaderBadges from '../utils/appendReaderBadges';
-
-/* global m, $ */
+import UserState from '../models/UserState';
+import normalizePostNumber from '../utils/normalizePostNumber';
 
 const translationPrefix = 'clarkwinkelmann-who-read.forum.';
 
-export default class AvatarSummary {
-    view(vnode) {
-        const LIMIT = app.forum.attribute('who-read.maxVisible');
+interface AvatarSummaryAttrs {
+    readers: UserState[]
+    extendable: boolean
+    discussion: Discussion
+}
+
+export default class AvatarSummary implements ClassComponent<AvatarSummaryAttrs> {
+    showAll: boolean = false
+
+    view(vnode: Vnode<AvatarSummaryAttrs>) {
+        const LIMIT = app.forum.attribute<number>('who-read.maxVisible');
 
         const {readers, extendable, discussion} = vnode.attrs;
 
@@ -27,7 +37,7 @@ export default class AvatarSummary {
                         title: extractText(app.translator.trans(translationPrefix + 'more.' + (extendable ? 'show' : 'info'), {
                             count: howManyMore,
                         })),
-                        onclick: event => {
+                        onclick: (event: Event) => {
                             if (extendable) {
                                 event.stopPropagation();
                                 this.showAll = true;
@@ -52,7 +62,7 @@ export default class AvatarSummary {
 
             appendReaderBadges(badges, reader);
 
-            const outdated = reader.unread() || (discussion && reader.last_read_post_number() < discussion.lastPostNumber());
+            const outdated = reader.unread() || (discussion && normalizePostNumber(reader.last_read_post_number()) < normalizePostNumber(discussion.lastPostNumber()));
 
             let toolTipTranslationKey = 'last-read-at';
 

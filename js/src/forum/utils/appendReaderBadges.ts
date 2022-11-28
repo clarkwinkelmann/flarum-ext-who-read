@@ -1,11 +1,11 @@
 import app from 'flarum/forum/app';
 import Badge from 'flarum/common/components/Badge';
-
-/* global flarum */
+import ItemList from 'flarum/common/utils/ItemList';
+import UserState from '../models/UserState';
 
 const translationPrefix = 'clarkwinkelmann-who-read.forum.badges.';
 
-export default function (badges, reader) {
+export default function (badges: ItemList<any>, reader: UserState) {
     if (flarum.extensions['flarum-subscriptions']) {
         switch (reader.subscription()) {
             case 'follow':

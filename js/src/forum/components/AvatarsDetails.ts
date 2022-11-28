@@ -1,3 +1,4 @@
+import {ClassComponent, Vnode} from 'mithril';
 import app from 'flarum/forum/app';
 import Link from 'flarum/common/components/Link';
 import Tooltip from 'flarum/common/components/Tooltip';
@@ -8,11 +9,14 @@ import userOnline from 'flarum/common/helpers/userOnline';
 import extractText from 'flarum/common/utils/extractText';
 import humanTime from 'flarum/common/utils/humanTime';
 import appendReaderBadges from '../utils/appendReaderBadges';
+import UserState from '../models/UserState';
 
-/* global m, $ */
+interface AvatarsDetailsAttrs {
+    readers: UserState[]
+}
 
-export default class AvatarsDetails {
-    view(vnode) {
+export default class AvatarsDetails implements ClassComponent<AvatarsDetailsAttrs> {
+    view(vnode: Vnode<AvatarsDetailsAttrs>) {
         return m('ul.WhoRead-list.WhoRead-details', vnode.attrs.readers.map(reader => {
             const user = reader.user();
 

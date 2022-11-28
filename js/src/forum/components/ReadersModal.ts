@@ -1,12 +1,21 @@
 import app from 'flarum/forum/app';
-import Modal from 'flarum/common/components/Modal';
+import Modal, {IInternalModalAttrs} from 'flarum/common/components/Modal';
 import AvatarsDetails from './AvatarsDetails';
-
-/* global m */
+import UserState from '../models/UserState';
 
 const translationPrefix = 'clarkwinkelmann-who-read.forum.modal.';
 
-export default class ReadersModal extends Modal {
+type Section = 'readersUntilHereOnly' | 'readersFurther' | 'readersEnd' | 'readersBehind';
+
+type ReadersModalAttrs = IInternalModalAttrs & {
+    [key in Section]: UserState[];
+};
+
+export default class ReadersModal extends Modal<ReadersModalAttrs> {
+    className() {
+        return 'ReadersModal';
+    }
+
     title() {
         return app.translator.trans(translationPrefix + 'title');
     }
@@ -20,7 +29,7 @@ export default class ReadersModal extends Modal {
         ]);
     }
 
-    section(dataKey, translationKey) {
+    section(dataKey: Section, translationKey: string) {
         if (!this.attrs[dataKey] || !this.attrs[dataKey].length) {
             return null;
         }

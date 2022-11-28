@@ -4,12 +4,14 @@ import Button from 'flarum/common/components/Button';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import Post from 'flarum/forum/components/Post';
 import icon from 'flarum/common/helpers/icon';
+import PostModel from 'flarum/common/models/Post';
 import extractText from 'flarum/common/utils/extractText';
 import AvatarSummary from './components/AvatarSummary';
 import ReadersModal from './components/ReadersModal';
 import UnreadButton from './components/UnreadButton';
-
-/* global m */
+import UserState from './models/UserState';
+import normalizePostNumber from './utils/normalizePostNumber';
+import normalizeReadersRelationship from './utils/normalizeReadersRelationship';
 
 const translationPrefix = 'clarkwinkelmann-who-read.forum.footer.';
 
@@ -29,7 +31,7 @@ export default function () {
             // are actually updated just slightly before the relationship and a redraw triggers in between
             // So this makes the post redraw too early and since the relationship is used to render the avatars
             // and badges they won't be up to date. So we need to use the relationship as source of data as well
-            () => JSON.stringify((this.attrs.post.discussion().clarkwinkelmannWhoReaders() || []).map(reader => [
+            () => JSON.stringify(normalizeReadersRelationship(this.attrs.post.discussion().clarkwinkelmannWhoReaders()).map((reader: UserState) => [
                 // The state ID will contain the user ID, so together with the other informations we can be sure it's a different state
                 reader.id(),
                 // Fixes the unread badge appearing out of sync on the user avatars
@@ -47,7 +49,7 @@ export default function () {
                 return;
             }
 
-            const {post} = this.attrs;
+            const post: PostModel = this.attrs.post;
             const discussion = post.discussion();
 
             // If the post is loaded on a user profile, we don't have access to the list
@@ -59,19 +61,19 @@ export default function () {
             }
 
             const postIds = discussion.postIds();
-            const currentPostIndex = postIds.indexOf(post.id());
+            const currentPostIndex = postIds.indexOf(post.id()!);
 
             if (currentPostIndex !== -1 && currentPostIndex + 1 < postIds.length) {
                 const nextPostId = postIds[currentPostIndex + 1];
-                const nextPost = app.store.getById('posts', nextPostId);
+                const nextPost = app.store.getById<PostModel>('posts', nextPostId);
 
                 if (nextPost) {
-                    const readersUntilHereOnly = discussion.clarkwinkelmannWhoReaders().filter(
-                        reader => reader.last_read_post_number() >= post.number() && reader.last_read_post_number() < nextPost.number()
+                    const readersUntilHereOnly = normalizeReadersRelationship(discussion.clarkwinkelmannWhoReaders()).filter(
+                        reader => normalizePostNumber(reader.last_read_post_number()) >= post.number() && normalizePostNumber(reader.last_read_post_number()) < nextPost.number()
                     );
 
-                    const readersFurther = discussion.clarkwinkelmannWhoReaders().filter(
-                        reader => reader.last_read_post_number() >= nextPost.number()
+                    const readersFurther = normalizeReadersRelationship(discussion.clarkwinkelmannWhoReaders()).filter(
+                        reader => normalizePostNumber(reader.last_read_post_number()) >= nextPost.number()
                     );
 
                     const totalReadersWhoHaveSeenThisPost = readersUntilHereOnly.length + readersFurther.length;
@@ -88,7 +90,7 @@ export default function () {
 
                     items.add('who-read', Button.component({
                         className: 'Button Button--link',
-                        onclick: event => {
+                        onclick: (event: Event) => {
                             event.preventDefault();
 
                             app.modal.show(ReadersModal, {
@@ -110,13 +112,13 @@ export default function () {
             } else if (currentPostIndex === postIds.length - 1) {
                 // If this is the last post
 
-                const readersEnd = discussion.clarkwinkelmannWhoReaders().filter(
-                    reader => reader.last_read_post_number() >= discussion.lastPostNumber()
+                const readersEnd = normalizeReadersRelationship(discussion.clarkwinkelmannWhoReaders()).filter(
+                    reader => normalizePostNumber(reader.last_read_post_number()) >= normalizePostNumber(discussion.lastPostNumber())
                 );
 
                 items.add('who-read', Button.component({
                     className: 'Button Button--link',
-                    onclick: event => {
+                    onclick: (event: Event) => {
                         event.preventDefault();
 
                         app.modal.show(ReadersModal, {

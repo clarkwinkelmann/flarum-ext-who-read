@@ -5,10 +5,8 @@ import DiscussionListItem from 'flarum/forum/components/DiscussionListItem';
 import AvatarSummary from './components/AvatarSummary';
 import filterVeryBehind from './utils/filterVeryBehind';
 
-/* global m */
-
 export default function () {
-    extend(DiscussionList.prototype, 'requestParams', function (params) {
+    extend(DiscussionList.prototype, 'requestParams' as any, function (params: any) {
         if (!app.forum.attribute('who-read.showInDiscussionList')) {
             return;
         }

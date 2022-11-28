@@ -1,8 +1,7 @@
 import app from 'flarum/admin/app';
 import Switch from 'flarum/common/components/Switch';
 import Group from 'flarum/common/models/Group';
-
-/* global m */
+import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 
 const settingsPrefix = 'who-read.';
 const translationPrefix = 'clarkwinkelmann-who-read.admin.settings.';
@@ -10,14 +9,14 @@ const translationPrefix = 'clarkwinkelmann-who-read.admin.settings.';
 app.initializers.add('clarkwinkelmann-who-read', () => {
     app.extensionData
         .for('clarkwinkelmann-who-read')
-        .registerSetting(function () {
-            const groupsValue = this.setting(settingsPrefix + 'onlyGroups', '')().split(',').filter(value => value > 0);
+        .registerSetting(function (this: ExtensionPage) {
+            const groupsValue = (this.setting(settingsPrefix + 'onlyGroups', '')() as string).split(',').filter(value => parseInt(value) > 0);
 
             return [
                 m('.Form-group', [
                     Switch.component({
                         state: this.setting(settingsPrefix + 'showInDiscussionList', '1')() === '1',
-                        onchange: value => {
+                        onchange: (value: boolean) => {
                             this.setting(settingsPrefix + 'showInDiscussionList')(value ? '1' : '0');
                         },
                     }, app.translator.trans(translationPrefix + 'show-in-discussion-list')),
@@ -25,7 +24,7 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
                 m('.Form-group', [
                     Switch.component({
                         state: this.setting(settingsPrefix + 'showInHero', '1')() === '1',
-                        onchange: value => {
+                        onchange: (value: boolean) => {
                             this.setting(settingsPrefix + 'showInHero')(value ? '1' : '0');
                         },
                     }, app.translator.trans(translationPrefix + 'show-in-hero')),
@@ -33,7 +32,7 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
                 m('.Form-group', [
                     Switch.component({
                         state: this.setting(settingsPrefix + 'showBetweenPosts', '1')() === '1',
-                        onchange: value => {
+                        onchange: (value: boolean) => {
                             this.setting(settingsPrefix + 'showBetweenPosts')(value ? '1' : '0');
                         },
                     }, app.translator.trans(translationPrefix + 'show-between-posts')),
@@ -41,7 +40,7 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
                 m('.Form-group', [
                     Switch.component({
                         state: this.setting(settingsPrefix + 'showCountOfReadersWhoStopped')() === '1',
-                        onchange: value => {
+                        onchange: (value: boolean) => {
                             this.setting(settingsPrefix + 'showCountOfReadersWhoStopped')(value ? '1' : '0');
                         },
                     }, app.translator.trans(translationPrefix + 'show-count-of-readers-who-stopped')),
@@ -58,7 +57,7 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
                     m('label', app.translator.trans(translationPrefix + 'max-visible')),
                     m('input.FormControl', {
                         type: 'number',
-                        bidi: this.setting(settingsPrefix + 'maxVisible', 10),
+                        bidi: this.setting(settingsPrefix + 'maxVisible', '10'),
                         min: 0,
                     }),
                 ]),
@@ -72,15 +71,15 @@ app.initializers.add('clarkwinkelmann-who-read', () => {
                 ]),
                 m('.Form-group', [
                     m('label', app.translator.trans(translationPrefix + 'only-groups')),
-                    app.store.all('groups').filter(group => group.id() !== Group.MEMBER_ID && group.id() !== Group.GUEST_ID).map(group => Switch.component({
-                        state: groupsValue.indexOf(group.id()) !== -1,
-                        onchange: checked => {
-                            let newValue = [];
+                    app.store.all<Group>('groups').filter(group => group.id() !== Group.MEMBER_ID && group.id() !== Group.GUEST_ID).map(group => Switch.component({
+                        state: groupsValue.indexOf(group.id()!) !== -1,
+                        onchange: (checked: boolean) => {
+                            let newValue: string[];
 
                             if (checked) {
                                 newValue = [
                                     ...groupsValue,
-                                    group.id(),
+                                    group.id()!,
                                 ];
                             } else {
                                 newValue = groupsValue.filter(v => v !== group.id());

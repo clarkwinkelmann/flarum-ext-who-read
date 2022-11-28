@@ -1,10 +1,15 @@
+import {ClassComponent, Vnode} from 'mithril';
 import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
+import Discussion from 'flarum/common/models/Discussion';
 
-/* global m */
+interface UnreadButtonAttrs {
+    discussion: Discussion
+    className: string
+}
 
-export default class UnreadButton {
-    view(vnode) {
+export default class UnreadButton implements ClassComponent<UnreadButtonAttrs> {
+    view(vnode: Vnode<UnreadButtonAttrs>) {
         const {discussion, className} = vnode.attrs;
 
         const unread = !!discussion.attribute('whoReadUnread');
