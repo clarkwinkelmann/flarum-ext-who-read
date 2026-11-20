@@ -3,7 +3,7 @@ import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import CommentPost from 'flarum/forum/components/CommentPost';
 import Post from 'flarum/forum/components/Post';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 import PostModel from 'flarum/common/models/Post';
 import extractText from 'flarum/common/utils/extractText';
 import AvatarSummary from './components/AvatarSummary';
@@ -89,7 +89,7 @@ export default function () {
                     }
 
                     items.add('who-read', Button.component({
-                        className: 'Button Button--link',
+                        className: 'Button Button--link WhoRead-button-overflow',
                         onclick: (event: Event) => {
                             event.preventDefault();
 
@@ -102,7 +102,9 @@ export default function () {
                     }, [
                         app.forum.attribute('who-read.showCountOfReadersWhoStopped') ? readersUntilHereOnly.length : totalReadersWhoHaveSeenThisPost,
                         ' ',
-                        icon('fas fa-check-double'),
+                        m(Icon, {
+                            name: 'fas fa-check-double',
+                        }),
                         ' ',
                         m(AvatarSummary, {
                             readers: readersUntilHereOnly,
@@ -117,7 +119,7 @@ export default function () {
                 );
 
                 items.add('who-read', Button.component({
-                    className: 'Button Button--link',
+                    className: 'Button Button--link WhoRead-button-overflow',
                     onclick: (event: Event) => {
                         event.preventDefault();
 
@@ -131,7 +133,9 @@ export default function () {
                 }, [
                     readersEnd.length,
                     ' ',
-                    icon('fas fa-check-double'),
+                    m(Icon, {
+                        name: 'fas fa-check-double',
+                    }),
                     ' ',
                     m(AvatarSummary, {
                         readers: readersEnd,

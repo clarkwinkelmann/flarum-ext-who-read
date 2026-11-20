@@ -24,7 +24,7 @@ export default function () {
         }
 
         items.add('who-read', Button.component({
-            className: 'Button Button--link',
+            className: 'Button Button--link WhoRead-button-overflow',
             onclick: (event: Event) => {
                 event.preventDefault();
 

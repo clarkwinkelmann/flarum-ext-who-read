@@ -40,3 +40,9 @@ clarkwinkelmann-who-read:
             max-visible: Maximum number of users to show before "read more"
             unread-icon: Icon for the unread badge
             only-groups: Only show read status of users belonging to those groups
+
+    lib:
+        gambits:
+            discussions:
+                readbyeveryone:
+                    key: readbyeveryone

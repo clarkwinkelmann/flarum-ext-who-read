@@ -2,13 +2,16 @@
 
 namespace ClarkWinkelmann\WhoRead;
 
-use Flarum\Api\Controller;
-use Flarum\Api\Serializer;
+use ClarkWinkelmann\WhoRead\Api\DiscussionResourceFields;
+use ClarkWinkelmann\WhoRead\Api\ForumResourceFields;
+use ClarkWinkelmann\WhoRead\Api\UserStateResource;
+use Flarum\Api\Context;
+use Flarum\Api\Endpoint\Endpoint;
+use Flarum\Api\Resource;
 use Flarum\Discussion\Discussion;
-use Flarum\Discussion\Event\Saving;
-use Flarum\Discussion\Filter\DiscussionFilterer;
 use Flarum\Discussion\Search\DiscussionSearcher;
 use Flarum\Extend;
+use Flarum\Search\Database\DatabaseSearchDriver;
 
 return [
     (new Extend\Frontend('forum'))
@@ -23,28 +26,39 @@ return [
     (new Extend\Model(Discussion::class))
         ->relationship('clarkwinkelmannWhoReaders', DiscussionReaderRelationship::class),
 
-    (new Extend\SimpleFlarumSearch(DiscussionSearcher::class))
-        ->addGambit(Gambits\NotFullyRead::class),
+    (new Extend\SearchDriver(DatabaseSearchDriver::class))
+        ->addFilter(DiscussionSearcher::class, Query\ReadByEveryone::class),
 
-    (new Extend\Filter(DiscussionFilterer::class))
-        ->addFilter(Gambits\NotFullyRead::class),
+    (new Extend\ApiResource(UserStateResource::class)),
 
-    (new Extend\Event())
-        ->listen(Saving::class, Listeners\SaveDiscussionUnread::class),
+    (new Extend\Settings())
+        ->default('who-read.showInDiscussionList', true)
+        ->default('who-read.showInHero', true)
+        ->default('who-read.showBetweenPosts', true)
+        ->default('who-read.showCountOfReadersWhoStopped', false)
+        ->default('who-read.hideWhenBehind', 0)
+        ->default('who-read.maxVisible', 10),
 
-    (new Extend\ApiSerializer(Serializer\ForumSerializer::class))
-        ->attributes(ForumAttributes::class),
+    (new Extend\ApiResource(Resource\ForumResource::class))
+        ->fields(ForumResourceFields::class),
 
-    (new Extend\ApiSerializer(Serializer\DiscussionSerializer::class))
-        ->hasMany('clarkwinkelmannWhoReaders', Serializers\UserStateSerializer::class)
-        ->attributes(DiscussionAttributes::class),
+    (new Extend\ApiResource(Resource\DiscussionResource::class))
+        ->endpoint(['create', 'update', 'show', 'index'], function (Endpoint $endpoint) {
+            return $endpoint
+                ->eagerLoad(function ($i, Context $context) {
+                    if (!$context->getActor()->hasPermission('who-read.seeRead')) {
+                        return [];
+                    }
 
-    (new Extend\ApiController(Controller\ListDiscussionsController::class))
-        ->addInclude('clarkwinkelmannWhoReaders.user.groups'),
-    (new Extend\ApiController(Controller\ShowDiscussionController::class))
-        ->addInclude('clarkwinkelmannWhoReaders.user.groups'),
-    (new Extend\ApiController(Controller\CreateDiscussionController::class))
-        ->addInclude('clarkwinkelmannWhoReaders.user.groups'),
-    (new Extend\ApiController(Controller\UpdateDiscussionController::class))
-        ->addInclude('clarkwinkelmannWhoReaders.user.groups'),
+                    return [
+                        'clarkwinkelmannWhoReaders.user.groups',
+                    ];
+                })
+                // It seems like we cannot easily set the include conditionally
+                // So we'll just do the eager load conditionally, and have a hard-coded empty result in the relationship for the situation where it's not needed
+                ->addDefaultInclude([
+                    'clarkwinkelmannWhoReaders.user.groups',
+                ]);
+        })
+        ->fields(DiscussionResourceFields::class),
 ];

@@ -1,7 +1,7 @@
 import {ClassComponent, Vnode} from 'mithril';
 import app from 'flarum/forum/app';
 import Tooltip from 'flarum/common/components/Tooltip';
-import avatar from 'flarum/common/helpers/avatar';
+import Avatar from 'flarum/common/components/Avatar';
 import listItems from 'flarum/common/helpers/listItems';
 import extractText from 'flarum/common/utils/extractText';
 import humanTime from 'flarum/common/utils/humanTime';
@@ -32,18 +32,19 @@ export default class AvatarSummary implements ClassComponent<AvatarSummaryAttrs>
                 if (index === LIMIT) {
                     const howManyMore = readers.length - LIMIT;
 
-                    return m('span.Avatar.WhoRead-more', {
-                        // Not using a tooltip here because it kind of breaks if a tooltip is open while Mithril redraws
-                        title: extractText(app.translator.trans(translationPrefix + 'more.' + (extendable ? 'show' : 'info'), {
+                    return m('li.WhoRead-item', m(Tooltip, {
+                        text: extractText(app.translator.trans(translationPrefix + 'more.' + (extendable ? 'show' : 'info'), {
                             count: howManyMore,
                         })),
+                        position: 'bottom', // No conflict with tooltips here, but keep same as avatars for consistency
+                    }, m('span.Avatar.WhoRead-more', {
                         onclick: (event: Event) => {
                             if (extendable) {
                                 event.stopPropagation();
                                 this.showAll = true;
                             }
                         },
-                    }, '+' + howManyMore);
+                    }, '+' + howManyMore)));
                 }
 
                 if (index >= LIMIT) {
@@ -75,10 +76,13 @@ export default class AvatarSummary implements ClassComponent<AvatarSummaryAttrs>
                     user,
                     ago: humanTime(reader.last_read_at()),
                 })),
+                position: 'bottom', // Prevent conflict with badge tooltips
             }, m('.WhoRead-avatar', {
                 className: outdated ? 'WhoRead-avatar--outdated' : '',
             }, [
-                avatar(user),
+                m(Avatar, {
+                    user,
+                }),
                 m('ul.badges', listItems(badges.toArray())),
             ])));
         }));

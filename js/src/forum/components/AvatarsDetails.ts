@@ -2,7 +2,7 @@ import {ClassComponent, Vnode} from 'mithril';
 import app from 'flarum/forum/app';
 import Link from 'flarum/common/components/Link';
 import Tooltip from 'flarum/common/components/Tooltip';
-import avatar from 'flarum/common/helpers/avatar';
+import Avatar from 'flarum/common/components/Avatar';
 import listItems from 'flarum/common/helpers/listItems';
 import username from 'flarum/common/helpers/username';
 import userOnline from 'flarum/common/helpers/userOnline';
@@ -34,12 +34,15 @@ export default class AvatarsDetails implements ClassComponent<AvatarsDetailsAttr
                     user,
                     ago: humanTime(reader.last_read_at()),
                 })),
+                position: 'bottom', // Prevent conflict with badge tooltips
             }, m(Link, {
                 href: app.route.user(user),
                 'data-container': 'body', // Bootstrap tooltip option so we overflow .Modal edge
             }, [
                 m('.WhoRead-avatar', [
-                    avatar(user),
+                    m(Avatar, {
+                        user,
+                    }),
                     m('ul.badges', listItems(badges.toArray())),
                 ]),
                 m('.WhoRead-user', [

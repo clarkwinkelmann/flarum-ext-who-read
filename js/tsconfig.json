@@ -1,8 +1,8 @@
 {
     "extends": "flarum-tsconfig",
     "include": [
-        "../vendor/flarum/core/js/dist-typings/@types/global.d.ts",
-        "src/**/*"
+        "src/**/*",
+        "../vendor/flarum/core/js/dist-typings/@types/**/*"
     ],
     "files": [
         "shims.d.ts"

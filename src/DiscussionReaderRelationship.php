@@ -10,11 +10,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DiscussionReaderRelationship
 {
-    protected $settings;
-
-    public function __construct(SettingsRepositoryInterface $settings)
+    public function __construct(
+        protected SettingsRepositoryInterface $settings
+    )
     {
-        $this->settings = $settings;
     }
 
     public function __invoke(Discussion $discussion): HasMany

@@ -4,16 +4,14 @@ import DiscussionListState from 'flarum/forum/states/DiscussionListState';
 import Discussion from 'flarum/common/models/Discussion';
 import Badge from 'flarum/common/components/Badge';
 import Model from 'flarum/common/Model';
-import UserState from './models/UserState';
 import addInDiscussionHero from './addInDiscussionHero';
 import addInDiscussionList from './addInDiscussionList';
 import addInPostStream from './addInPostStream';
 import addUnreadControls from './addUnreadControls';
 
-app.initializers.add('clarkwinkelmann-who-read', () => {
-    app.store.models['clarkwinkelmann-who-readers'] = UserState;
-    Discussion.prototype.clarkwinkelmannWhoReaders = Discussion.hasMany('clarkwinkelmannWhoReaders');
+export {default as extend} from './extend';
 
+app.initializers.add('clarkwinkelmann-who-read', () => {
     extend(Discussion.prototype, 'badges', function (items) {
         if (this.attribute('whoReadUnread')) {
             items.add('who-read-unread', Badge.component({
